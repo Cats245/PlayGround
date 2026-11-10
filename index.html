@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+  <meta name="theme-color" content="#080b0b" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='8' fill='%23080b0b'/%3E%3Cpath d='M13 13h12v26h26v12H13z' fill='%23d4ff67'/%3E%3C/svg%3E" />
+  <title>Night Shift — Sector 09</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800;900&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main id="game-shell">
+    <canvas id="view" aria-label="Night Shift first-person game"></canvas>
+    <div class="scanlines" aria-hidden="true"></div>
+    <div class="vignette" aria-hidden="true"></div>
+
+    <header class="topline">
+      <div class="brand"><span class="brand-mark">N</span><span>NIGHT<span class="brand-dim">SHIFT</span></span></div>
+      <div class="mission"><span class="live-dot"></span> SECTOR 09 <span class="mission-divider">/</span> CONTAINMENT BREACH</div>
+      <button id="audio-toggle" class="sound-toggle" aria-label="Toggle audio">♫ <span>SOUND ON</span></button>
+    </header>
+
+    <section class="hud" aria-live="polite">
+      <div class="hud-left">
+        <div class="stat-label">VITALS <span id="health-state">STABLE</span></div>
+        <div class="health-row"><span class="cross-icon">✚</span><strong id="health-value">100</strong><div class="meter"><i id="health-meter"></i></div></div>
+        <div class="armor-row"><span>ARMOR</span><strong id="armor-value">025</strong><div class="armor-meter"><i id="armor-meter"></i></div></div>
+      </div>
+      <div class="hud-center">
+        <div class="sector-label">HOSTILES <span id="enemy-count">00</span></div>
+        <div id="objective">CLEAR THE SECTOR</div>
+      </div>
+      <div class="hud-right">
+        <div class="weapon-label"><span id="weapon-name">SERVICE PISTOL</span><span id="weapon-index">01 / 03</span></div>
+        <div class="ammo-row"><strong id="ammo-current">12</strong><span class="ammo-slash">/</span><span id="ammo-reserve">048</span><span class="ammo-label">ROUNDS</span></div>
+        <div class="ammo-type" id="ammo-type">9MM BALL · SEMI-AUTO</div>
+      </div>
+    </section>
+
+    <div id="toast" class="toast" role="status"></div>
+    <div id="crosshair" class="crosshair" aria-hidden="true"><i></i><b></b><em></em><span></span></div>
+    <div id="damage-flash" class="damage-flash" aria-hidden="true"></div>
+
+    <aside id="map-panel" class="map-panel">
+      <div class="map-title"><span>LOCAL MAP</span><span id="map-sector">09-A</span></div>
+      <canvas id="map" width="120" height="120" aria-label="Nearby map"></canvas>
+      <div class="map-foot"><i></i> SIGNAL LOST</div>
+    </aside>
+
+    <div class="bottom-hint"><span id="hint-text">WASD MOVE <b>·</b> MOUSE AIM <b>·</b> CLICK FIRE <b>·</b> R RELOAD</span><button id="pause-button">Ⅱ <span>PAUSE</span></button></div>
+
+    <section id="title-screen" class="screen visible">
+      <div class="title-grid"></div>
+      <div class="title-card">
+        <div class="eyebrow"><span class="eyebrow-line"></span> BLACKSITE INCIDENT REPORT <span class="report-id">#09-441</span></div>
+        <h1>NIGHT<span>SHIFT</span></h1>
+        <div class="title-sub">THEY HEAR YOU <i>BREATHING.</i></div>
+        <p class="story">The lower levels went dark at 03:17. Your team didn't make it out.<br>Find the service lift. Don't let them get close.</p>
+        <button id="start-button" class="primary-button"><span>ENTER THE FACILITY</span><b>↗</b></button>
+        <div class="start-note"><span class="keycap">↵</span> CLICK TO INITIALIZE <span class="note-separator">/</span> HEADPHONES RECOMMENDED</div>
+      </div>
+      <div class="title-stamp">CLASSIFIED<br><strong>09</strong></div>
+      <div class="title-footer"><span>BLACKSITE RESEARCH DIVISION</span><span>BUILD 1994.09 <i>●</i> LIVE</span></div>
+    </section>
+
+    <section id="pause-screen" class="screen">
+      <div class="modal-card">
+        <div class="eyebrow">FIELD OPERATOR STATUS</div><h2>PAUSED<span>.</span></h2>
+        <p>Take a breath. They won't.</p>
+        <button id="resume-button" class="primary-button"><span>RESUME MISSION</span><b>▶</b></button>
+        <div class="controls-list"><span>WASD <i>MOVE</i></span><span>MOUSE <i>LOOK</i></span><span>1 / 2 / 3 <i>WEAPON</i></span><span>R <i>RELOAD</i></span><span>SHIFT <i>SPRINT</i></span></div>
+      </div>
+    </section>
+
+    <section id="end-screen" class="screen">
+      <div class="modal-card end-card"><div class="eyebrow" id="end-kicker">MISSION REPORT</div><h2 id="end-title">SECTOR CLEARED<span>.</span></h2><p id="end-copy">The service lift is waiting.</p><div class="result-stats"><span>HOSTILES NEUTRALIZED<strong id="final-kills">00</strong></span><span>TIME IN SECTOR<strong id="final-time">00:00</strong></span></div><button id="restart-button" class="primary-button"><span>RUN IT BACK</span><b>↻</b></button></div>
+    </section>
+
+    <nav id="touch-controls" aria-label="Touch controls">
+      <div class="touch-pad">
+        <button data-move="forward" aria-label="Move forward">▲</button>
+        <div><button data-move="left" aria-label="Move left">◀</button><button data-move="back" aria-label="Move backward">▼</button><button data-move="right" aria-label="Move right">▶</button></div>
+      </div>
+      <div class="touch-actions"><button id="touch-reload">↻</button><button id="touch-fire">FIRE</button></div>
+    </nav>
+    <div id="pickup-banner" class="pickup-banner"></div>
+  </main>
+  <script src="game.js"></script>
+</body>
+</html>
